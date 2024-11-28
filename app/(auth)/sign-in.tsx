@@ -2,17 +2,40 @@ import CustomButton from "@/components/CustomButton";
 import InputField from "@/components/InputField";
 import OAuth from "@/components/OAuth";
 import { icons, images } from "@/constants";
-import { Link } from "expo-router";
-import { useState } from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import { useSignIn } from "@clerk/clerk-expo";
+import { Link, router } from "expo-router";
+import { useCallback, useState } from "react";
+import { Alert, Image, ScrollView, Text, View } from "react-native";
 
 export default function SignIn() {
+  const { signIn, setActive, isLoaded } = useSignIn();
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
 
-  async function onSignInPress() {}
+  const onSignInPress = useCallback(async () => {
+    if (!isLoaded) {
+      return;
+    }
+
+    try {
+      const signInAttempt = await signIn.create({
+        identifier: form.email,
+        password: form.password,
+      });
+
+      if (signInAttempt.status === "complete") {
+        await setActive({ session: signInAttempt.createdSessionId });
+        router.replace("/(root)/(tabs)/home");
+      } else {
+        console.error(JSON.stringify(signInAttempt, null, 2));
+      }
+    } catch (err: any) {
+      Alert.alert("err", err.errors[0].longMessage);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, form]);
 
   return (
     <ScrollView className="flex-1 bg-white">
@@ -40,7 +63,7 @@ export default function SignIn() {
             onChangeText={(value) => setForm({ ...form, password: value })}
           />
           <CustomButton
-            title="Sign Up"
+            title="Sign In"
             onPress={onSignInPress}
             className="mt-6"
           />

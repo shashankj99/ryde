@@ -2,10 +2,10 @@ import { InputFieldProps } from "@/types/type";
 import {
   View,
   Text,
-  KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Image,
   TextInput,
+  KeyboardAvoidingView,
   Platform,
 } from "react-native";
 
