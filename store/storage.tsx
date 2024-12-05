@@ -1,23 +1,60 @@
-import { MMKV } from "react-native-mmkv";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const tokenStorage = new MMKV({
-  id: "token-storage",
-  encryptionKey: "some-secrt-key",
-});
-
-export const storage = new MMKV({
-  id: "my-app-storage",
-  encryptionKey: "some-secrt-key",
-});
+export const tokenStorage = {
+  setItem: async (key: string, value: string) => {
+    try {
+      await AsyncStorage.setItem(key, value);
+    } catch (error) {
+      console.error("Error setting token:", error);
+    }
+  },
+  getItem: async (key: string) => {
+    try {
+      const value = await AsyncStorage.getItem(key);
+      return value !== null ? value : null;
+    } catch (error) {
+      console.error("Error getting token:", error);
+      return null;
+    }
+  },
+  removeItem: async (key: string) => {
+    try {
+      await AsyncStorage.removeItem(key);
+    } catch (error) {
+      console.error("Error removing token:", error);
+    }
+  },
+  clearAll: async () => {
+    try {
+      await AsyncStorage.clear();
+    } catch (error) {
+      console.error("Error removing token:", error);
+    }
+  },
+};
 
 export const mmkvStorage = {
-  setItem: (key: string, value: string) => {
-    storage.set(key, value);
+  setItem: async (key: string, value: string) => {
+    try {
+      await AsyncStorage.setItem(`my-app-storage-${key}`, value);
+    } catch (error) {
+      console.error("Error setting item:", error);
+    }
   },
-  getItem: (key: string) => {
-    return storage.getString(key) ?? null;
+  getItem: async (key: string) => {
+    try {
+      const value = await AsyncStorage.getItem(`my-app-storage-${key}`);
+      return value !== null ? value : null;
+    } catch (error) {
+      console.error("Error getting item:", error);
+      return null;
+    }
   },
-  removeItem: (key: string) => {
-    storage.delete(key);
+  removeItem: async (key: string) => {
+    try {
+      await AsyncStorage.removeItem(`my-app-storage-${key}`);
+    } catch (error) {
+      console.error("Error removing item:", error);
+    }
   },
 };

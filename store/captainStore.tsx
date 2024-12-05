@@ -16,10 +16,10 @@ interface CaptainStoreProps {
   setUser: (data: any) => void;
   setOnDuty: (data: boolean) => void;
   setLocation: (data: CustomLocation) => void;
-  clearData: () => void;
+  clearCaptainData: () => void;
 }
 
-export const useUserStore = create<CaptainStoreProps>()(
+export const useCaptainStore = create<CaptainStoreProps>()(
   persist(
     (set) => ({
       user: null,
@@ -28,7 +28,7 @@ export const useUserStore = create<CaptainStoreProps>()(
       setUser: (data) => set({ user: data }),
       setOnDuty: (data) => set({ onDuty: data }),
       setLocation: (data) => set({ location: data }),
-      clearData: () =>
+      clearCaptainData: () =>
         set({
           user: {},
           location: null,

@@ -1,19 +1,31 @@
 import { authStyles } from "@/styles/authStyles";
 import { commonStyles } from "@/styles/commonStyles";
-import { Image, View, ScrollView, TouchableOpacity } from "react-native";
+import { Image, View, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
-import { resetAndNavigate } from "@/utils/Helpers";
+import { login } from "@/service/auth-service";
+import { useWS } from "@/service/ws-provider";
 import CustomText from "@/components/shared/CustomText";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import PhoneInput from "@/components/shared/PhoneInput";
 import CustomButton from "@/components/shared/CustomButton";
 
 const CustomerAuth = () => {
+  const { updateAccessToken } = useWS();
   const [phone, setPhone] = useState<string>("");
 
   const handleSubmit = () => {
-    resetAndNavigate("/customer/home");
+    if (!phone) {
+      Alert.alert("error", "Please enter a phone number");
+      return;
+    }
+
+    if (phone.length !== 10) {
+      Alert.alert("error", "Phone number should be 10 digits long");
+      return;
+    }
+
+    login({ role: "customer", phone }, updateAccessToken);
   };
 
   return (
