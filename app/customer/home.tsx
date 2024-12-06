@@ -16,7 +16,7 @@ const Home = () => {
     []
   );
 
-  const [mapHeight, setMapHeight] = useState(snapPoints[0]);
+  const [mapHeight, setMapHeight] = useState(snapPoints[1]);
 
   const handleSheetChange = useCallback((index: number) => {
     const height = index === 1 ? screenHeight * 0.5 : screenHeight * 0.8;

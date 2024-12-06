@@ -33,13 +33,12 @@ export const getLatLong = async (placeId: string) => {
 export const reverseGeocode = async (latitude: number, longitude: number) => {
   try {
     const response = await axios.get(
-      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.EXPO_PUBLIC_MAP_API_KEY}`
+      `https://us1.locationiq.com/v1/reverse?key=${process.env.EXPO_PUBLIC_MAP_API_KEY}&lat=${latitude}&lon=${longitude}&format=json&`
     );
-    if (response.data.status === "OK") {
-      const address = response.data.results[0].formatted_address;
-      return address;
+    if (response.data) {
+      return response.data.display_name;
     } else {
-      console.log("Geocoding failed: ", response.data.status);
+      console.log("Geocoding failed: ", response.data);
       return "";
     }
   } catch (error) {

@@ -1,61 +1,61 @@
 export const customMapStyle = [
   {
-    "featureType": "administrative.land_parcel",
-    "elementType": "labels",
-    "stylers": [
+    featureType: "administrative.land_parcel",
+    elementType: "labels",
+    stylers: [
       {
-        "visibility": "off"
-      }
-    ]
+        visibility: "off",
+      },
+    ],
   },
   {
-    "featureType": "poi",
-    "elementType": "labels.text",
-    "stylers": [
+    featureType: "poi",
+    elementType: "labels.text",
+    stylers: [
       {
-        "visibility": "off"
-      }
-    ]
+        visibility: "off",
+      },
+    ],
   },
   {
-    "featureType": "poi.business",
-    "stylers": [
+    featureType: "poi.business",
+    stylers: [
       {
-        "visibility": "off"
-      }
-    ]
+        visibility: "off",
+      },
+    ],
   },
   {
-    "featureType": "road",
-    "elementType": "labels.icon",
-    "stylers": [
+    featureType: "road",
+    elementType: "labels.icon",
+    stylers: [
       {
-        "visibility": "off"
-      }
-    ]
+        visibility: "off",
+      },
+    ],
   },
   {
-    "featureType": "road.local",
-    "elementType": "labels",
-    "stylers": [
+    featureType: "road.local",
+    elementType: "labels",
+    stylers: [
       {
-        "visibility": "off"
-      }
-    ]
+        visibility: "off",
+      },
+    ],
   },
   {
-    "featureType": "transit",
-    "stylers": [
+    featureType: "transit",
+    stylers: [
       {
-        "visibility": "off"
-      }
-    ]
-  }
-]
+        visibility: "off",
+      },
+    ],
+  },
+];
 
-export const indiaIntialRegion = {
-  latitude: 28.6139,
-  longitude: 77.2090,
+export const initialRegion = {
+  latitude: 26.455,
+  longitude: 87.27,
   latitudeDelta: 0.5,
   longitudeDelta: 0.5,
-}
+};
