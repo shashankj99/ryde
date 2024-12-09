@@ -6,7 +6,7 @@ import { useUserStore } from "@/store/userStore";
 import { mapStyles } from "@/styles/mapStyles";
 import { customMapStyle, initialRegion } from "@/utils/CustomMap";
 import { FC, useEffect, useRef, useState } from "react";
-import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Image, TouchableOpacity, View } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
 import { useIsFocused } from "@react-navigation/native";
 import { reverseGeocode } from "@/utils/mapUtils";
@@ -204,5 +204,3 @@ const DraggableMap: FC<{ height: number }> = ({ height }) => {
 };
 
 export default DraggableMap;
-
-const styles = StyleSheet.create({});
