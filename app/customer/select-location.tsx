@@ -1,32 +1,63 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import CustomText from "@/components/shared/CustomText";
 import LocationInput from "@/components/customer/LocationInput";
+import LocationItem from "@/components/customer/LocationItem";
 import { commonStyles } from "@/styles/commonStyles";
 import { homeStyles } from "@/styles/homeStyles";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, TouchableOpacity, View } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "@/utils/Constants";
 import { uiStyles } from "@/styles/uiStyles";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getPlacesSuggestions } from "@/utils/mapUtils";
+import { useUserStore } from "@/store/userStore";
+import { locationStyles } from "@/styles/locationStyles";
+import { MapItem } from "@/utils/types";
 
 const SelectLocation = () => {
+  const { location, setLocation } = useUserStore();
   const [pickup, setPickup] = useState<string>("");
   const [drop, setDrop] = useState<string>("");
   const [pickupCoords, setPickupCoords] = useState<any>(null);
   const [dropCoords, setDropCoords] = useState<any>(null);
-  const [location, SelectLocation] = useState([]);
+  const [locations, SelectLocations] = useState([]);
   const [focusedInput, setFocusedInput] = useState<string>("drop");
+  const [modalTitle, setModalTitle] = useState<string>("drop");
+  const [isMapModalVisible, setIsMapModalVisible] = useState<boolean>(false);
+
+  useEffect(() => {
+    setPickup(location?.address ?? "");
+    setPickupCoords(location);
+  }, [location]);
 
   const fetchLocations = async (query: string) => {
     if (query?.length > 4) {
       const data = await getPlacesSuggestions(query);
-      SelectLocation(data);
+      SelectLocations(data);
     }
   };
+
+  const addLocation = async (item: MapItem) => {
+    if (focusedInput === "drop") {
+      setDropCoords(item);
+      setDrop(item.title);
+    } else {
+      setLocation({
+        latitude: item.latitude,
+        longitude: item.longitude,
+        address: item.title,
+      });
+      setPickupCoords(item);
+      setPickup(item.title);
+    }
+  };
+
+  const renderLocations = ({ item }: { item: MapItem }) => (
+    <LocationItem item={item} onPress={() => addLocation(item)} />
+  );
 
   return (
     <View style={homeStyles.container}>
@@ -78,10 +109,34 @@ const SelectLocation = () => {
           {focusedInput} suggestions
         </CustomText>
       </View>
+      <FlatList
+        data={locations}
+        renderItem={renderLocations}
+        keyExtractor={(item: { place_id: string; title: string }) =>
+          item?.place_id
+        }
+        initialNumToRender={5}
+        windowSize={5}
+        ListFooterComponent={
+          <TouchableOpacity
+            style={[commonStyles.flexRow, locationStyles.container]}
+            onPress={() => {
+              setModalTitle(focusedInput);
+              setIsMapModalVisible(true);
+            }}
+          >
+            <Image
+              source={require("@/assets/icons/map_pin.png")}
+              style={uiStyles.mapPinIcon}
+            />
+            <CustomText fontFamily="Medium" fontSize={12}>
+              Select From Map
+            </CustomText>
+          </TouchableOpacity>
+        }
+      />
     </View>
   );
 };
 
 export default SelectLocation;
-
-const styles = StyleSheet.create({});

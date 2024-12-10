@@ -32,9 +32,14 @@ export const getLatLong = async (placeId: string) => {
 
 export const reverseGeocode = async (latitude: number, longitude: number) => {
   try {
-    const response = await axios.get(
-      `https://us1.locationiq.com/v1/reverse?key=${process.env.EXPO_PUBLIC_MAP_API_KEY}&lat=${latitude}&lon=${longitude}&format=json&`
-    );
+    const response = await axios.get(`https://us1.locationiq.com/v1/reverse`, {
+      params: {
+        key: process.env.EXPO_PUBLIC_MAP_API_KEY,
+        lat: latitude,
+        lon: longitude,
+        format: "json",
+      },
+    });
     if (response.data) {
       return response.data.display_name;
     } else {
@@ -50,27 +55,25 @@ export const reverseGeocode = async (latitude: number, longitude: number) => {
 function extractPlaceData(data: any) {
   return data.map((item: any) => ({
     place_id: item.place_id,
-    title: item.structured_formatting.main_text,
-    description: item.description,
+    title: item.display_name,
+    latitude: +item.lat,
+    longitude: +item.lon,
   }));
 }
 
 export const getPlacesSuggestions = async (query: string) => {
-  const { location } = useUserStore.getState();
   try {
-    const response = await axios.get(
-      `https://maps.googleapis.com/maps/api/place/autocomplete/json`,
-      {
-        params: {
-          input: query,
-          location: `${location?.latitude},${location?.longitude}`,
-          radius: 50000,
-          components: "country:IN",
-          key: process.env.EXPO_PUBLIC_MAP_API_KEY,
-        },
-      }
-    );
-    return extractPlaceData(response.data.predictions);
+    const response = await axios.get("https://us1.locationiq.com/v1/search", {
+      params: {
+        key: process.env.EXPO_PUBLIC_MAP_API_KEY,
+        q: query,
+        dedupe: 1,
+        format: "json",
+        countrycodes: "np",
+        limit: 5,
+      },
+    });
+    return extractPlaceData(response.data);
   } catch (error) {
     console.error("Error fetching autocomplete suggestions:", error);
     return [];
