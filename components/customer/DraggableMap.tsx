@@ -10,8 +10,8 @@ import { Image, TouchableOpacity, View } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
 import { useIsFocused } from "@react-navigation/native";
 import { reverseGeocode } from "@/utils/mapUtils";
-import * as Location from "expo-location";
 import { useWS } from "@/service/ws-provider";
+import * as Location from "expo-location";
 
 const DraggableMap: FC<{ height: number }> = ({ height }) => {
   const MAX_DISTANCE_THRESHOLD = 10000;

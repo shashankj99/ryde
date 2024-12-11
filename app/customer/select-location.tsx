@@ -16,6 +16,7 @@ import { getPlacesSuggestions } from "@/utils/mapUtils";
 import { useUserStore } from "@/store/userStore";
 import { locationStyles } from "@/styles/locationStyles";
 import { MapItem } from "@/utils/types";
+import MapPickerModal from "@/components/customer/MapPickerModal";
 
 const SelectLocation = () => {
   const { location, setLocation } = useUserStore();
@@ -23,7 +24,7 @@ const SelectLocation = () => {
   const [drop, setDrop] = useState<string>("");
   const [pickupCoords, setPickupCoords] = useState<any>(null);
   const [dropCoords, setDropCoords] = useState<any>(null);
-  const [locations, SelectLocations] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [focusedInput, setFocusedInput] = useState<string>("drop");
   const [modalTitle, setModalTitle] = useState<string>("drop");
   const [isMapModalVisible, setIsMapModalVisible] = useState<boolean>(false);
@@ -34,9 +35,9 @@ const SelectLocation = () => {
   }, [location]);
 
   const fetchLocations = async (query: string) => {
-    if (query?.length > 4) {
+    if (query?.length >= 4) {
       const data = await getPlacesSuggestions(query);
-      SelectLocations(data);
+      setLocations(data);
     }
   };
 
@@ -112,9 +113,7 @@ const SelectLocation = () => {
       <FlatList
         data={locations}
         renderItem={renderLocations}
-        keyExtractor={(item: { place_id: string; title: string }) =>
-          item?.place_id
-        }
+        keyExtractor={(item: MapItem) => item?.place_id}
         initialNumToRender={5}
         windowSize={5}
         ListFooterComponent={
@@ -135,6 +134,40 @@ const SelectLocation = () => {
           </TouchableOpacity>
         }
       />
+      {isMapModalVisible && (
+        <MapPickerModal
+          visible={isMapModalVisible}
+          onClose={() => setIsMapModalVisible(false)}
+          title={modalTitle}
+          selectedLocation={{
+            latitude:
+              focusedInput === "drop"
+                ? dropCoords?.latitude
+                : pickupCoords?.latitude,
+            longitude:
+              focusedInput === "drop"
+                ? dropCoords?.longitude
+                : pickupCoords?.longitude,
+            address: focusedInput === "drop" ? drop : pickup,
+          }}
+          onSelectLocation={(data) => {
+            if (data) {
+              if (modalTitle === "drop") {
+                setDropCoords(data);
+                setDrop(data.address);
+              } else {
+                setLocation({
+                  latitude: data.latitude,
+                  longitude: data.longitude,
+                  address: data.address,
+                });
+                setPickupCoords(data);
+                setPickup(data.address);
+              }
+            }
+          }}
+        />
+      )}
     </View>
   );
 };
